@@ -1,0 +1,44 @@
+/*
+  Colors:
+*/
+$brand:     #f1c40f;
+$green:     #2ecc71;
+$darkGreen: #27ae60;
+$blue:      #3498db;
+$darkBlue:  #2980b9;
+$red:       #e74c3c;
+$darkRed:   #c0392b;
+
+/*
+  Basic structure:
+*/
+
+body {
+  background-color: #fff;
+  font-family: 'Lato', sans-serif;
+}
+
+.notice {
+  margin-top: -20px;
+  padding: 50px;
+  text-align: center;
+  background-color: #333;
+  color: rgb(255, 255, 255);
+  font-size: 2em;
+  margin-bottom: 20px;
+
+  &.notice-success {
+    background-color: $green;
+  }
+
+  &.notice-error {
+    background-color: $red;
+  }
+}
+
+.invisible-input {
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  width: 100%;
+}
