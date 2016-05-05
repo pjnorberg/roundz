@@ -9,7 +9,7 @@ Route::get('/', [
 ]);
 
 Route::resource('app', 'AppController');
-Route::resource('api', 'ApiController');
+Route::resource('participants', 'ParticipantsController');
 
 // Show tournament:
 Route::get('/{slug}', [

@@ -21,4 +21,17 @@ class Match extends Model
     {
         return $this->belongsTo(Participant::class, 'away_participant_id');
     }
+
+    /**
+     * Helpers
+     */
+
+    public function winner()
+    {
+        if ( ! $this->finished) {
+            return false;
+        }
+
+        return $this->home_score > $this->away_score ? $this->homeParticipant : $this->awayParticipant;
+    }
 }

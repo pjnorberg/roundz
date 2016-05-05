@@ -1,3 +1,5 @@
+@import 'vendor/animate.min';
+
 /*
   Colors:
 */
@@ -41,4 +43,12 @@ body {
   border: none;
   padding: 0;
   width: 100%;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
+.statusbar {
+  padding: 15px;
 }

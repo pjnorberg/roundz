@@ -41,11 +41,11 @@ class Tournament extends Model
 
     public function participants()
     {
-        return $this->hasMany(Participant::class);
+        return $this->hasMany(Participant::class)->orderBy('created_at', 'ASC');
     }
 
     public function matches()
     {
-        return $this->hasMany(Match::class);
+        return $this->hasMany(Match::class)->orderBy('round', 'ASC');
     }
 }

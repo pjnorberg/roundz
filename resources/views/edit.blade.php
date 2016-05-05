@@ -1,8 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <input type="hidden" v-model="tournamentId" value="{{ $tournament->id }}">
+    <div id="v-edit" class="container">
+        <script>
+            // Output all data needed for this view in a global var:
+            var tournament = {
+                id: {{ $tournament->id }},
+                instagram_tag: '{{ $tournament->instagram_tag }}',
+                token: '{{ csrf_token() }}',
+                participants: [
+                    @foreach ($tournament->participants as $participant)
+                    {
+                        id: {{ $participant->id }},
+                        name: '{{ $participant->name }}',
+                        points: 0
+                    }
+                    {{ $participant->id != $tournament->participants->last()->id ? ',' : '' }}
+                    @endforeach
+                ]
+            };
+        </script>
         <div class="page-header">
             <h1>Edit tournament</h1>
         </div>
@@ -21,15 +38,16 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Participants
-                        <span class="badge pull-right">{{ $tournament->participants()->count() }}</span>
+                        <span class="badge pull-right">@{{ tournament.participants.length }}</span>
                     </div>
                     <div class="panel-body">
                         <ul class="list-group">
                             <li class="list-group-item">
-                                <input type="text" class="invisible-input" placeholder="Type name and hit enter to add player">
+                                <input type="text" class="invisible-input" v-on:keyup.enter="addParticipant" placeholder="Type name and hit enter to add player">
                             </li>
-                            <li class="list-group-item" v-for="participant in participants">
-                                <span class="pull-right"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                            <li class="list-group-item" v-for="participant in tournament.participants">
+                                @{{{ participant.name }}}
+                                <span class="pull-right clickable" v-on:click="deleteParticipant($index)"><i class="fa fa-trash" aria-hidden="true"></i></span>
                             </li>
                         </ul>
                     </div>
@@ -38,11 +56,38 @@
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Matches
-                        <span class="badge badge-primary pull-right">{{ $tournament->matches()->count() }}</span>
+                        Suggested matches
+                        <span class="badge badge-primary pull-right">@{{ tournamentMatchCount }}</span>
                     </div>
                     <div class="panel-body">
-
+                        <template v-if="actionStatus" class="statusbar text-center text-danger">
+                            @{{{ actionStatus }}}
+                        </template>
+                        <button type="button" class="btn btn-primary" v-on:click="generateMatches">Generate matches</button>
+                        <hr>
+                        <template v-if="playoffMatches.length > 0">
+                            <h3>Playoff</h3>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Game #</th>
+                                        <th>Round</th>
+                                        <th>Home team</th>
+                                        <th>Away team</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="match in playoffMatches">
+                                        <td>@{{ match.id + 1 }}</td>
+                                        <td>@{{ match.round }}</td>
+                                        <td>@{{{ match._home_name }}}</td>
+                                        <td>@{{{ match._away_name }}}</td>
+                                        <td>@{{ match.home_score }} &mdash; @{{ match.away_score }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </template>
                     </div>
                 </div>
             </div>
