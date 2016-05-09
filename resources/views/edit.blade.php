@@ -13,7 +13,8 @@
                     {
                         id: {{ $participant->id }},
                         name: '{{ $participant->name }}',
-                        points: 0
+                        points: 0,
+                        qualified: 0,
                     }
                     {{ $participant->id != $tournament->participants->last()->id ? ',' : '' }}
                     @endforeach
@@ -65,6 +66,27 @@
                         </template>
                         <button type="button" class="btn btn-primary" v-on:click="generateMatches">Generate matches</button>
                         <hr>
+                        <template v-if="qualifyingMatches.length > 0">
+                            <h3>Qualifying round</h3>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Game #</th>
+                                    <th>Home team</th>
+                                    <th>Away team</th>
+                                    <th>Score</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="match in qualifyingMatches">
+                                    <td>@{{ match.id + 1 }}</td>
+                                    <td>@{{{ match._home_name }}}</td>
+                                    <td>@{{{ match._away_name }}}</td>
+                                    <td>@{{ match.home_score }} &mdash; @{{ match.away_score }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </template>
                         <template v-if="playoffMatches.length > 0">
                             <h3>Playoff</h3>
                             <table class="table table-striped">
