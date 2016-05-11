@@ -53,8 +53,23 @@ $(function () {
                     }
                 });
             },
+            persistMatches: function persistMatches() {
+                var matches = {
+                    tournamentId: this.tournamentId,
+                    playoffMatches: this.playoffMatches,
+                    qualifyingMatches: this.qualifyingMatches,
+                    _token: this.tournament.token
+                };
+
+                this.$resource('/matches/').save(matches).then(function (response) {
+                    if (response.data.response == 'success') {
+                        console.log('Matches successfully created!');
+                    }
+                });
+            },
             generateMatches: function generateMatches() {
                 // Get everyone in this tournament and shuffle this list randomly:
+                this.resetApp();
                 var totalPlayerCount = this.tournament.participants.length;
                 this.shuffleParticipants();
 
@@ -70,26 +85,46 @@ $(function () {
                     this.tournamentSize = this.findTournamentSize(totalPlayerCount);
                     this.generateQualifyingRound();
 
-                    // And then we can make a playoff as well.
+                    // And then we can make a playoff as well:
+                    this.calculateGames(0);
+                    this.makePlayoff(this.tournamentSize, this.tournamentMatchCount);
                 }
             },
+            /**
+             * Make a qualifiying round of matches.
+             * @param matchId
+             */
             generateQualifyingRound: function generateQualifyingRound() {
+                var matchId = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+
+                this.qualifyingMatches = [];
+
                 // The idea is that we have a tournament size (lets say 8), which is the closest value to the
                 // total number of players available (lets say 12). Then our qualifying round will just be a
-                // matter of having everyone play one game and the top 8 will be transferred to the playoff.
-                // (If uneven number of total players, one random player will be automatically qualified and
-                // and then the top 7 will enter the playoff.
-                var qualifiedPositions = this.tournamentSize;
-                console.log(qualifiedPositions);
+                // matter of having everyone face every one else and the top 8 will be transferred to the playoff.
+                var gameCounter = 0;
 
-                // If this is an uneven count, subtract one and have a random player be directly qualified:
-                if (this.tournamentSize % 2 == 1) {
-                    this.directlyQualifyPlayer();
+                console.log('qualifier: ' + this.tournament.participants.length);
+                console.log('playoff: ' + this.tournamentSize);
+
+                // Make games (totalPlayerCount - 1) for every participant:
+                for (var i = 0; i < this.tournament.participants.length; i++) {
+                    console.log('Player 1: ' + this.tournament.participants[i].id);
+
+                    for (var j = 0; j < this.tournament.participants.length; j++) {
+                        if (this.tournament.participants[j].id != this.tournament.participants[i].id) {
+                            gameCounter++;
+                            this.createQualifyingMatch(matchId, this.tournament.participants[i].id, this.tournament.participants[i].name, this.tournament.participants[j].id, this.tournament.participants[j].name);
+                            matchId++;
+                        }
+                    }
                 }
+
+                console.log('Games total: ' + gameCounter);
             },
-            directlyQualifyPlayer: function directlyQualifyPlayer() {
-                var id = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
-            },
+            /**
+             * Add participants to all playoff places (round = 1).
+             */
             addParticipantsToPlayoff: function addParticipantsToPlayoff() {
                 // We have lets say 15 games, for 16 players. That means 8 games, or 1 per 2 players first round!
                 var firstRound = this.playoffSize / 2;
@@ -139,7 +174,7 @@ $(function () {
                         away = previousRoundMatchIds[i + i + 1];
                     }
 
-                    this.createMatch(matchId, round, home, away);
+                    this.createPlayoffMatch(matchId, round, home, away);
                     playedMatchIds.push(matchId);
                     matchId++;
                 }
@@ -154,17 +189,7 @@ $(function () {
 
                 return true;
             },
-            /**
-             * Create matches (without teams assigned) but linked to previous matches (if
-             * @param id
-             * @param round
-             * @param home
-             * @param away
-             * @param playoff
-             */
-            createMatch: function createMatch(id, round, home, away) {
-                var playoff = arguments.length <= 4 || arguments[4] === undefined ? true : arguments[4];
-
+            createPlayoffMatch: function createPlayoffMatch(id, round, homeFrom, awayFrom) {
                 // 'id', 'home_team_from' and 'away_team_from' are all relative IDs generated by this application.
                 // Underscored versions are the database-persisted versions.
                 var match = {
@@ -172,25 +197,45 @@ $(function () {
                     _home_team_from: null,
                     _away_team_from: null,
                     id: id,
-                    round: 0,
-                    home_team_from: null,
-                    away_team_from: null,
+                    round: round,
+                    home_team_from: homeFrom,
+                    away_team_from: awayFrom,
                     home_participant_id: null,
                     away_participant_id: null,
-                    playoff: playoff,
+                    playoff: 1,
                     home_score: 0,
                     away_score: 0,
                     finished: 0
                 };
 
-                if (playoff) {
-                    match.home_team_from = home;
-                    match.away_team_from = away;
-                    match.round = round;
-                }
-
                 this.playoffMatches.push(match);
-                console.log('match ' + id + ', round ' + round + ', winners from matches ' + home + ' vs ' + away);
+
+                console.log('match ' + id + ', round ' + round + ', winners from matches ' + homeFrom + ' vs ' + awayFrom);
+            },
+            createQualifyingMatch: function createQualifyingMatch(id, homeId, homeName, awayId, awayName) {
+                // 'id', 'home_team_from' and 'away_team_from' are all relative IDs generated by this application.
+                // Underscored versions are the database-persisted versions.
+                var match = {
+                    _id: null,
+                    _home_team_from: null,
+                    _away_team_from: null,
+                    _home_name: homeName,
+                    _away_name: awayName,
+                    id: id,
+                    round: 0,
+                    home_team_from: null,
+                    away_team_from: null,
+                    home_participant_id: homeId,
+                    away_participant_id: awayId,
+                    playoff: 0,
+                    home_score: 0,
+                    away_score: 0,
+                    finished: 0
+                };
+
+                this.qualifyingMatches.push(match);
+
+                console.log('match ' + id + ', between ' + homeId + ' vs ' + awayId);
             },
             /**
              * Check if number is a workable size for a tournament.

@@ -58,13 +58,16 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Suggested matches
-                        <span class="badge badge-primary pull-right">@{{ tournamentMatchCount }}</span>
+                        <span class="badge badge-primary pull-right">@{{ qualifyingMatches.length + playoffMatches.length }}</span>
                     </div>
                     <div class="panel-body">
                         <template v-if="actionStatus" class="statusbar text-center text-danger">
                             @{{{ actionStatus }}}
                         </template>
-                        <button type="button" class="btn btn-primary" v-on:click="generateMatches">Generate matches</button>
+                        <div>
+                            <button type="button" class="btn btn-primary" v-on:click="generateMatches">Generate matches</button>
+                            <button type="button" class="btn btn-danger" v-on:click="persistMatches">Create tournament</button>
+                        </div>
                         <hr>
                         <template v-if="qualifyingMatches.length > 0">
                             <h3>Qualifying round</h3>

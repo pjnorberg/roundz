@@ -10,6 +10,7 @@ Route::get('/', [
 
 Route::resource('app', 'AppController');
 Route::resource('participants', 'ParticipantsController');
+Route::resource('matches', 'MatchesController');
 
 // Show tournament:
 Route::get('/{slug}', [

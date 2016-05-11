@@ -43,15 +43,31 @@ $(function() {
             },
             deleteParticipant: function (index) {
                 var participantId = this.tournament.participants[index].id;
-                this.$resource('/participants/' + participantId).delete({_token: this.tournament.token}).then(function (response) {
+                this.$resource('/participants/' + participantId).delete({ _token: this.tournament.token }).then(function (response) {
                     if (response.data.response == 'success') {
                         this.tournament.participants.splice(index, 1);
                         this.resetApp();
                     }
                 });
             },
+            persistMatches: function () {
+                var matches = {
+                    tournamentId: this.tournament.id,
+                    playoffMatches: this.playoffMatches,
+                    qualifyingMatches: this.qualifyingMatches,
+                    _token: this.tournament.token
+                };
+
+                this.$resource('/matches/').save(matches).then(function (response) {
+                    if (response.data.response == 'success') {
+                        this.setFinished('Matches successfully created!');
+                        this.resetApp();
+                    }
+                });
+            },
             generateMatches: function () {
                 // Get everyone in this tournament and shuffle this list randomly:
+                this.resetApp();
                 var totalPlayerCount = this.tournament.participants.length;
                 this.shuffleParticipants();
 
@@ -71,21 +87,28 @@ $(function() {
                     this.tournamentSize = this.findTournamentSize(totalPlayerCount);
                     this.generateQualifyingRound();
 
-                    // And then we can make a playoff as well.
+                    // And then we can make a playoff as well:
+                    this.calculateGames(0);
+                    this.makePlayoff(
+                        this.tournamentSize,
+                        this.tournamentMatchCount
+                    );
                 }
             },
+            /**
+             * Make a qualifiying round of matches.
+             * @param matchId
+             */
             generateQualifyingRound: function (matchId = 0) {
                 this.qualifyingMatches = [];
 
                 // The idea is that we have a tournament size (lets say 8), which is the closest value to the
                 // total number of players available (lets say 12). Then our qualifying round will just be a
                 // matter of having everyone face every one else and the top 8 will be transferred to the playoff.
-                var totalPlayerCount = this.tournament.participants.length;
-                var qualifiedPositions = this.tournamentSize;
                 var gameCounter = 0;
 
-                console.log('qualifier: ' + totalPlayerCount);
-                console.log('playoff: ' + qualifiedPositions);
+                console.log('qualifier: ' + this.tournament.participants.length);
+                console.log('playoff: ' + this.tournamentSize);
 
                 // Make games (totalPlayerCount - 1) for every participant:
                 for (var i = 0; i < this.tournament.participants.length; i++) {
@@ -108,6 +131,9 @@ $(function() {
 
                 console.log('Games total: ' + gameCounter);
             },
+            /**
+             * Add participants to all playoff places (round = 1).
+             */
             addParticipantsToPlayoff: function () {
                 // We have lets say 15 games, for 16 players. That means 8 games, or 1 per 2 players first round!
                 var firstRound = (this.playoffSize / 2);
@@ -255,8 +281,11 @@ $(function() {
                 }
                 this.tournament.participants = array;
             },
-            setStatus: function (text = false, maxDuration = 5000) {
-                this.actionStatus = (text ? '<i class="fa fa-cog fa-spin"></i> &nbsp; ' + text : '')
+            setWorking: function (text = false) {
+                this.actionStatus = (text ? '<div class="alert"><i class="fa fa-cog fa-spin"></i> &nbsp; ' + text + '</div>' : '')
+            },
+            setFinished: function (text = false) {
+                this.actionStatus = (text ? '<div class="alert"><i class="fa fa-check-circle"></i> &nbsp; ' + text + '</div>' : '')
             },
             /**
              * Calculate number of matches in this tournament (based on tournamentSize).

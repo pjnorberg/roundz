@@ -3,17 +3,22 @@
 /*
   Colors:
 */
-$brand:     #f1c40f;
-$green:     #2ecc71;
-$darkGreen: #27ae60;
-$blue:      #3498db;
-$darkBlue:  #2980b9;
-$red:       #e74c3c;
-$darkRed:   #c0392b;
+$brand:           #f1c40f;
+$green:           #2ecc71;
+$darkGreen:       #27ae60;
+$blue:            #3498db;
+$darkBlue:        #2980b9;
+$red:             #e74c3c;
+$darkRed:         #c0392b;
+$profileColor:    #0E1824;
 
 /*
   Basic structure:
 */
+
+html, body {
+  height: 100%;
+}
 
 body {
   background-color: #fff;
@@ -51,4 +56,25 @@ body {
 
 .statusbar {
   padding: 15px;
+}
+
+/*
+  Tournament show view:
+*/
+
+.public {
+  background-color: #fff;
+  color: #000;
+  padding: 12rem;
+
+  .tournamentHeader {
+    position: absolute;
+    right: 12rem;
+    top: 2rem;
+  }
+
+  #tournament {
+    width: 100%;
+    min-height: 100%;
+  }
 }
