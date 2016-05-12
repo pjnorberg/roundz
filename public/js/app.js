@@ -55,7 +55,7 @@ $(function () {
             },
             persistMatches: function persistMatches() {
                 var matches = {
-                    tournamentId: this.tournamentId,
+                    tournamentId: this.tournament.id,
                     playoffMatches: this.playoffMatches,
                     qualifyingMatches: this.qualifyingMatches,
                     _token: this.tournament.token
@@ -63,7 +63,8 @@ $(function () {
 
                 this.$resource('/matches/').save(matches).then(function (response) {
                     if (response.data.response == 'success') {
-                        console.log('Matches successfully created!');
+                        this.setFinished('Matches successfully created!');
+                        this.resetApp();
                     }
                 });
             },
@@ -278,11 +279,15 @@ $(function () {
                 }
                 this.tournament.participants = array;
             },
-            setStatus: function setStatus() {
+            setWorking: function setWorking() {
                 var text = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
-                var maxDuration = arguments.length <= 1 || arguments[1] === undefined ? 5000 : arguments[1];
 
-                this.actionStatus = text ? '<i class="fa fa-cog fa-spin"></i> &nbsp; ' + text : '';
+                this.actionStatus = text ? '<div class="alert"><i class="fa fa-cog fa-spin"></i> &nbsp; ' + text + '</div>' : '';
+            },
+            setFinished: function setFinished() {
+                var text = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
+                this.actionStatus = text ? '<div class="alert"><i class="fa fa-check-circle"></i> &nbsp; ' + text + '</div>' : '';
             },
             /**
              * Calculate number of matches in this tournament (based on tournamentSize).

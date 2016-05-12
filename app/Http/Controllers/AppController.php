@@ -55,10 +55,9 @@ class AppController extends Controller
     public function show($slug)
     {
         $tournament = Tournament::where('slug', $slug)->where('user_id', Auth::user()->id)->first();
-        $initialRound = 1;
-        $initialGame = 1;
+        $rounds = $tournament->getRounds();
 
-        return view('show', compact('tournament', 'initialRound', 'initialGame'));
+        return view('show', compact('tournament', 'rounds'));
     }
 
     public function create()

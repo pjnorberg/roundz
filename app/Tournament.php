@@ -58,4 +58,13 @@ class Tournament extends Model
     {
         return $this->hasMany(Match::class)->where('playoff', 0)->orderBy('round', 'ASC');
     }
+
+    /**
+     * Helpers
+     */
+
+    public function getRounds()
+    {
+        return $this->playoffMatches()->select('round')->groupBy('round')->get()->pluck('round');
+    }
 }
