@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Match;
 use App\Tournament;
 use Illuminate\Contracts\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -26,7 +27,9 @@ class AppController extends Controller
     {
         try {
             $tournament = Tournament::findOrFail($id);
-            return view('edit', compact('tournament'));
+            $matchCount = 1;
+
+            return view('edit', compact('tournament', 'matchCount'));
         }
         catch (\Exception $e) {
             abort(403, $e->getMessage());
@@ -89,6 +92,18 @@ class AppController extends Controller
             $tournament = Tournament::findOrFail($id);
             $tournament->delete();
             return back()->with('success_message', 'Your tournament has been deleted.');
+        }
+        catch (\Exception $e) {
+            return back()->withErrors();
+        }
+    }
+
+    public function deleteMatches($tournamentId)
+    {
+        try {
+            Match::where('tournament_id', $tournamentId)->delete();
+
+            return back()->with('success_message', 'Your tournament matches has been deleted.');
         }
         catch (\Exception $e) {
             return back()->withErrors();

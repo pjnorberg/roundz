@@ -12,6 +12,11 @@ Route::resource('app', 'AppController');
 Route::resource('participants', 'ParticipantsController');
 Route::resource('matches', 'MatchesController');
 
+Route::delete('/app/{tournamentId}/delete-matches', [
+    'as' => 'tournament.deleteMatches',
+    'uses' => 'AppController@deleteMatches'
+]);
+
 // Show tournament:
 Route::get('/{slug}', [
     'as' => 'app.show',

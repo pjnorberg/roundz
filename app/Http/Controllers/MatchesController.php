@@ -103,4 +103,32 @@ class MatchesController extends Controller
 
         return response()->json($json);
     }
+
+    public function edit($id)
+    {
+        $match = Match::find($id);
+
+        return view('matches.edit', compact('match'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $match = Match::findOrFail($id);
+            $match->home_score = $request->get('home_score');
+            $match->away_score = $request->get('away_score');
+            $match->save();
+
+            if ($request->has('finished')) {
+                $match->finished = $request->get('finished');
+                $match->save();
+                return redirect()->route('app.show', [$match->tournament->slug]);
+            }
+
+            return back()->with('success_message', 'Your match has been updated.');
+        }
+        catch (ValidationException $e) {
+            return back()->withErrors()->withInput();
+        }
+    }
 }
