@@ -108,18 +108,25 @@ $(function () {
                 console.log('qualifier: ' + this.tournament.participants.length);
                 console.log('playoff: ' + this.tournamentSize);
 
+                /*
                 // Make games (totalPlayerCount - 1) for every participant:
                 for (var i = 0; i < this.tournament.participants.length; i++) {
                     console.log('Player 1: ' + this.tournament.participants[i].id);
-
-                    for (var j = 0; j < this.tournament.participants.length; j++) {
+                     for (var j = 0; j < this.tournament.participants.length; j++) {
                         if (this.tournament.participants[j].id != this.tournament.participants[i].id) {
                             gameCounter++;
-                            this.createQualifyingMatch(matchId, this.tournament.participants[i].id, this.tournament.participants[i].name, this.tournament.participants[j].id, this.tournament.participants[j].name);
+                            this.createQualifyingMatch(
+                                matchId,
+                                this.tournament.participants[i].id,
+                                this.tournament.participants[i].name,
+                                this.tournament.participants[j].id,
+                                this.tournament.participants[j].name
+                            );
                             matchId++;
                         }
                     }
                 }
+                */
 
                 console.log('Games total: ' + gameCounter);
             },
