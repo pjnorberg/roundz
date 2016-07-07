@@ -41,12 +41,17 @@ class Tournament extends Model
 
     public function participants()
     {
-        return $this->hasMany(Participant::class)->orderBy('created_at', 'ASC');
+        return $this->hasMany(Participant::class);
     }
 
     public function matches()
     {
         return $this->hasMany(Match::class)->orderBy('round', 'ASC');
+    }
+
+    public function finishedQualifyingMatches()
+    {
+        return ! $this->qualifyingMatches()->where('finished', 0)->count();
     }
 
     public function playoffMatches()
@@ -66,5 +71,21 @@ class Tournament extends Model
     public function getRounds()
     {
         return $this->playoffMatches()->select('round')->groupBy('round')->get()->pluck('round');
+    }
+
+    public function getQualifyingTable()
+    {
+        return $this->participants()
+            ->orderBy('points', 'DESC')
+            ->orderBy('diff', 'DESC')
+            ->orderBy('games_played', 'DESC')
+            ->get()
+        ;
+    }
+
+    public function setupPlayoff()
+    {
+        // todo: populate the first round of the playoff with the top participants!
+        $playoffSize = $this->playoff_size;
     }
 }

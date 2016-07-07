@@ -5,6 +5,35 @@
         <h1>{{ $tournament->name }}</h1>
         <small class="subheader">Playoff</small>
     </span>
+    <div id="qualifying">
+        <div class="qualifier-wrapper">
+            <h3>Qualifying rounds</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="text-center" title="Games played">G</th>
+                    <th class="text-center">+/-</th>
+                    <th class="text-center" title="Points">P</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach ($participants as $row => $participant)
+                    @if ($row == $tournament->playoff_size)
+                        <tr class="cutoff">
+                    @else
+                        <tr>
+                            @endif
+                            <td>{{ $participant->name }}</td>
+                            <td class="text-center">{{ $participant->points }}</td>
+                            <td class="text-center">{{ $participant->diff }}</td>
+                            <td class="text-center">{{ $participant->games_played }}</td>
+                        </tr>
+                        @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div id="tournament" class="clearfix">
         @foreach ($rounds as $round)
             <div class="round" style="width: {{ 100 / count($rounds) }}%;">

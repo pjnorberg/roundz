@@ -55,6 +55,7 @@ $(function() {
                     tournamentId: this.tournament.id,
                     playoffMatches: this.playoffMatches,
                     qualifyingMatches: this.qualifyingMatches,
+                    playoffSize: this.tournamentSize,
                     _token: this.tournament.token
                 };
 
@@ -128,27 +129,6 @@ $(function() {
                         this.tournament.participants[nextIndex].name
                     );
                 }
-
-                /*
-                // Make games (totalPlayerCount - 1) for every participant:
-                for (var i = 0; i < this.tournament.participants.length; i++) {
-                    console.log('Player 1: ' + this.tournament.participants[i].id);
-
-                    for (var j = 0; j < this.tournament.participants.length; j++) {
-                        if (this.tournament.participants[j].id != this.tournament.participants[i].id) {
-                            gameCounter++;
-                            this.createQualifyingMatch(
-                                matchId,
-                                this.tournament.participants[i].id,
-                                this.tournament.participants[i].name,
-                                this.tournament.participants[j].id,
-                                this.tournament.participants[j].name
-                            );
-                            matchId++;
-                        }
-                    }
-                }
-                */
 
                 console.log('Games total: ' + gameCounter);
             },

@@ -9,7 +9,7 @@
                 instagram_tag: '{{ $tournament->instagram_tag }}',
                 token: '{{ csrf_token() }}',
                 participants: [
-                    @foreach ($tournament->participants as $participant)
+                    @foreach ($tournament->participants()->orderBy('created_at')->get() as $participant)
                     {
                         id: {{ $participant->id }},
                         name: '{{ $participant->name }}',

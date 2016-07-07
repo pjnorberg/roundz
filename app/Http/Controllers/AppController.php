@@ -44,7 +44,6 @@ class AppController extends Controller
 
             $tournament->name = $request->get('name');
             $tournament->slug = $request->get('slug');
-            $tournament->instagram_tag = $request->get('instagram_tag');
 
             $tournament->save();
 
@@ -59,8 +58,9 @@ class AppController extends Controller
     {
         $tournament = Tournament::where('slug', $slug)->where('user_id', Auth::user()->id)->first();
         $rounds = $tournament->getRounds();
+        $participants = $tournament->getQualifyingTable();
 
-        return view('show', compact('tournament', 'rounds'));
+        return view('show', compact('tournament', 'rounds', 'participants'));
     }
 
     public function create()

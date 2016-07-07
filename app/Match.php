@@ -48,6 +48,14 @@ class Match extends Model
         {
             if ($match->finished) {
                 $match->updateNextRound();
+                $match->setPoints();
+                $match->addGame();
+                $match->calculateDiff();
+
+                if ($match->tournament->finishedQualifyingMatches()) {
+                    // Populate the playoff now as the qualifying round has been finished:
+                    $match->tournament->setupPlayoff();
+                }
             }
         });
     }
@@ -154,5 +162,56 @@ class Match extends Model
         $this->home_participant_id = $match['home_participant_id'];
         $this->away_participant_id = $match['away_participant_id'];
         $this->playoff = 1;
+    }
+
+    public function setPoints()
+    {
+        // The game is tied, give 1 point each:
+        if ($this->home_score == $this->away_score) {
+            $this->homeParticipant->points += 1;
+            $this->homeParticipant->save();
+
+            $this->awayParticipant->points += 1;
+            $this->awayParticipant->save();
+            return true;
+        }
+
+        // Otherwise give 3 points to winner:
+        if ($this->home_score > $this->away_score) {
+            $this->homeParticipant->points += 3;
+            $this->homeParticipant->save();
+            return true;
+        }
+
+        if ($this->home_score < $this->away_score) {
+            $this->awayParticipant->points += 3;
+            $this->awayParticipant->save();
+            return true;
+        }
+    }
+
+    public function addGame()
+    {
+        $this->homeParticipant->games_played += 1;
+        $this->homeParticipant->save();
+        $this->awayParticipant->games_played += 1;
+        $this->awayParticipant->save();
+        return true;
+    }
+
+    /**
+     * Update game difference in goals.
+     */
+    public function calculateDiff()
+    {
+        // For home participant:
+        $sum = ($this->home_score) - ($this->away_score);
+        $this->homeParticipant->diff += $sum;
+        $this->homeParticipant->save();
+
+        // For away participant:
+        $sum = ($this->away_score) - ($this->home_score);
+        $this->awayParticipant->diff += $sum;
+        $this->awayParticipant->save();
     }
 }

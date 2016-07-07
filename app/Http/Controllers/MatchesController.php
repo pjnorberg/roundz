@@ -74,6 +74,11 @@ class MatchesController extends Controller
                 }
             }
 
+            // Save size of playoff part, we need this later:
+            $tournament = Tournament::findOrFail($request->get('tournamentId'));
+            $tournament->playoff_size = $request->get('playoffSize');
+            $tournament->save();
+
             $json = [
                 'response' => 'success'
             ];
@@ -107,6 +112,10 @@ class MatchesController extends Controller
     public function edit($id)
     {
         $match = Match::find($id);
+
+        if ($match->finished) {
+            abort(403, 'This game has already finished and cannot be changed.');
+        }
 
         return view('matches.edit', compact('match'));
     }

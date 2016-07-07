@@ -2438,9 +2438,25 @@ body {
       font-size: 3rem;
       float: right;
       color: #999; }
+  .public #qualifying {
+    width: 15%;
+    height: 100%;
+    min-height: 100%;
+    margin-right: 5%;
+    float: left;
+    position: relative; }
+    .public #qualifying .qualifier-wrapper {
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+      transform: translateY(-50%); }
+    .public #qualifying .cutoff {
+      border-top: 3px solid red; }
   .public #tournament {
     position: relative;
-    width: 100%;
+    float: left;
+    width: 80%;
     height: 100%;
     min-height: 100%; }
     .public #tournament a {

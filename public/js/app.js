@@ -58,6 +58,7 @@ $(function () {
                     tournamentId: this.tournament.id,
                     playoffMatches: this.playoffMatches,
                     qualifyingMatches: this.qualifyingMatches,
+                    playoffSize: this.tournamentSize,
                     _token: this.tournament.token
                 };
 
@@ -108,25 +109,17 @@ $(function () {
                 console.log('qualifier: ' + this.tournament.participants.length);
                 console.log('playoff: ' + this.tournamentSize);
 
-                /*
-                // Make games (totalPlayerCount - 1) for every participant:
                 for (var i = 0; i < this.tournament.participants.length; i++) {
-                    console.log('Player 1: ' + this.tournament.participants[i].id);
-                     for (var j = 0; j < this.tournament.participants.length; j++) {
-                        if (this.tournament.participants[j].id != this.tournament.participants[i].id) {
-                            gameCounter++;
-                            this.createQualifyingMatch(
-                                matchId,
-                                this.tournament.participants[i].id,
-                                this.tournament.participants[i].name,
-                                this.tournament.participants[j].id,
-                                this.tournament.participants[j].name
-                            );
-                            matchId++;
-                        }
+                    // Last round of games!
+                    if (i + 1 < this.tournament.participants.length) {
+                        var currentIndex = i;
+                        var nextIndex = i + 1;
+                    } else {
+                        var currentIndex = i;
+                        var nextIndex = 0;
                     }
+                    this.createQualifyingMatch(matchId, this.tournament.participants[currentIndex].id, this.tournament.participants[currentIndex].name, this.tournament.participants[nextIndex].id, this.tournament.participants[nextIndex].name);
                 }
-                */
 
                 console.log('Games total: ' + gameCounter);
             },
