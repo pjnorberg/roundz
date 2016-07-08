@@ -12,6 +12,9 @@ $red:             #e74c3c;
 $darkRed:         #c0392b;
 $profileColor:    #0E1824;
 
+$font-text: 'Lato', sans-serif;
+$font-headers: 'Oswald', sans-serif;
+
 /*
   Basic structure:
 */
@@ -22,7 +25,12 @@ html, body {
 
 body {
   background-color: #fff;
-  font-family: 'Lato', sans-serif;
+  font-family: $font-text;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-headers;
+  font-weight: 400;
 }
 
 .notice {

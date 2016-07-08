@@ -85,11 +85,19 @@
                                         <td>
                                             {{ $match->awayParticipant ? $match->awayParticipant->name : $match->potentialParticipants('away') }}
                                         </td>
+                                        @if ( ! $match->finished && $match->hasTeams())
                                         <td>
-                                            <input type="number" value="{{ $match->home_score }}" class="score-box home-score" v-on:change="updateScore($event, {{ $match->id }}, 'home')" min="0">
+                                            <input name="homeScore-{{ $match->id }}" type="number" value="{{ $match->home_score }}" class="score-box home-score" v-on:change="updateScore($event, {{ $match->id }}, 'home')" min="0">
                                             &mdash;
-                                            <input type="number" value="{{ $match->away_score }}" v-on:change="updateScore($event, {{ $match->id }}, 'away')" class="score-box away-score" min="0">
+                                            <input name="awayScore-{{ $match->id }}" type="number" value="{{ $match->away_score }}" v-on:change="updateScore($event, {{ $match->id }}, 'away')" class="score-box away-score" min="0">
                                         </td>
+                                        @else
+                                        <td>
+                                            {{ $match->home_score }}
+                                            &mdash;
+                                            {{ $match->away_score }}
+                                        </td>
+                                        @endif
                                         <td>
                                             @if ( ! $match->finished && $match->hasTeams())
                                                 <span id="endGame-{{ $match->id }}" class="btn btn-sm btn-danger" v-on:click="finishGame({{ $match->id }})">End game</span>

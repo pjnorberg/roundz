@@ -123,7 +123,12 @@ class MatchesController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $match = Match::findOrFail($id);
+            $match = Match::where('id', $id)->where('finished', 0)->first();
+
+            if ( ! $match) {
+                throw new \Exception('Game has finished!');
+            }
+
             if ($request->has('home_score')) {
                 $match->home_score = $request->get('home_score');
             }
@@ -139,8 +144,8 @@ class MatchesController extends Controller
 
             return response()->json(['success' => true]);
         }
-        catch (ValidationException $e) {
-            return response()->json(['success' => false]);
+        catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 }

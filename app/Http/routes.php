@@ -4,17 +4,18 @@ Route::auth();
 
 // Tournament overview:
 Route::get('/', [
-    'as' => 'app.index',
+    'as' => 'app.home',
     'uses' => 'AppController@index',
 ]);
 
 Route::resource('app', 'AppController');
+Route::resource('tournaments', 'TournamentController');
 Route::resource('participants', 'ParticipantsController');
 Route::resource('matches', 'MatchesController');
 
-Route::delete('/app/{tournamentId}/delete-matches', [
+Route::delete('/tournaments/{tournamentId}/delete-matches', [
     'as' => 'tournament.deleteMatches',
-    'uses' => 'AppController@deleteMatches'
+    'uses' => 'TournamentController@deleteMatches'
 ]);
 
 // Show tournament:

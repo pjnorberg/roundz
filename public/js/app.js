@@ -298,6 +298,37 @@ $(function () {
                     return this.calculateGames(matches);
                 }
                 return true;
+            },
+            updateScore: function updateScore(event, matchId, whoScored) {
+                data = {
+                    _token: this.tournament.token
+                };
+
+                if (whoScored == 'home') {
+                    data.home_score = event.target.value;
+                } else if (whoScored == 'away') {
+                    data.away_score = event.target.value;
+                }
+
+                this.$resource('/matches/' + matchId).update(data).then(function (response) {
+                    if (response.data.success) {} else {}
+                });
+            },
+            finishGame: function finishGame(matchId) {
+                data = {
+                    finished: true,
+                    _token: this.tournament.token
+                };
+
+                this.$resource('/matches/' + matchId).update(data).then(function (response) {
+                    if (response.data.success) {
+                        // Remove button:
+                        var elem = document.getElementById('endGame-' + matchId);
+                        elem.parentNode.removeChild(elem);
+                        // Change status:
+                        document.getElementById('gameStatus-' + matchId).innerHTML = 'Finished';
+                    }
+                });
             }
         }
     });

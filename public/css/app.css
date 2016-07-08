@@ -2396,7 +2396,11 @@ html, body {
 
 body {
   background-color: #fff;
-  font-family: 'Lato', sans-serif; }
+  font-family: "Lato", sans-serif; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Oswald", sans-serif;
+  font-weight: 400; }
 
 .notice {
   margin-top: -20px;

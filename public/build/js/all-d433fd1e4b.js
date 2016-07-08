@@ -312,6 +312,10 @@ $(function() {
                 return true;
             },
             updateScore: function (event, matchId, whoScored) {
+
+                // "Lock" current input until response being sent back:
+                event.target.disabled = true;
+
                 data = {
                     _token: this.tournament.token
                 };
@@ -324,10 +328,10 @@ $(function() {
                 }
 
                 this.$resource('/matches/' + matchId).update(data).then(function (response) {
-                    if (response.data.success) {
+                    if ( ! response.data.success) {
+                        alert('Something happened and the match could not be updated! Try again or report problem!');
                     }
-                    else {
-                    }
+                    event.target.disabled = false;
                 });
             },
             finishGame: function (matchId) {
