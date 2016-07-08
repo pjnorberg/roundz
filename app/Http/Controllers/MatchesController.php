@@ -124,20 +124,23 @@ class MatchesController extends Controller
     {
         try {
             $match = Match::findOrFail($id);
-            $match->home_score = $request->get('home_score');
-            $match->away_score = $request->get('away_score');
+            if ($request->has('home_score')) {
+                $match->home_score = $request->get('home_score');
+            }
+            if ($request->has('away_score')) {
+                $match->away_score = $request->get('away_score');
+            }
             $match->save();
 
             if ($request->has('finished')) {
                 $match->finished = $request->get('finished');
                 $match->save();
-                return redirect()->route('app.show', [$match->tournament->slug]);
             }
 
-            return back()->with('success_message', 'Your match has been updated.');
+            return response()->json(['success' => true]);
         }
         catch (ValidationException $e) {
-            return back()->withErrors()->withInput();
+            return response()->json(['success' => false]);
         }
     }
 }

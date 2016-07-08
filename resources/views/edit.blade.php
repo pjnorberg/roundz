@@ -21,6 +21,7 @@
                 ]
             };
         </script>
+        <a href="/{{ $tournament->slug }}" class="btn btn-default pull-right" target="_blank"><i class="fa fa-rocket" aria-hidden="true"></i> &nbsp; View standings</a>
         <div class="page-header">
             <h1>Manage tournament</h1>
         </div>
@@ -69,8 +70,8 @@
                                         <th>Home team</th>
                                         <th>Away team</th>
                                         <th>Score</th>
+                                        <th>Finished</th>
                                         <th>Status</th>
-                                        <th>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -84,15 +85,19 @@
                                         <td>
                                             {{ $match->awayParticipant ? $match->awayParticipant->name : $match->potentialParticipants('away') }}
                                         </td>
-                                        <td>{{ $match->home_score }} &mdash; {{ $match->away_score }}</td>
-                                        <td>{{ $match->getStatus() }}</td>
                                         <td>
-                                            @if ( ! $match->finished)
-                                            <a href="{{ route('matches.edit', [$match->id]) }}">
-                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                            </a>
+                                            <input type="number" value="{{ $match->home_score }}" class="score-box home-score" v-on:change="updateScore($event, {{ $match->id }}, 'home')" min="0">
+                                            &mdash;
+                                            <input type="number" value="{{ $match->away_score }}" v-on:change="updateScore($event, {{ $match->id }}, 'away')" class="score-box away-score" min="0">
+                                        </td>
+                                        <td>
+                                            @if ( ! $match->finished && $match->hasTeams())
+                                                <span id="endGame-{{ $match->id }}" class="btn btn-sm btn-danger" v-on:click="finishGame({{ $match->id }})">End game</span>
+                                            @else
+                                                &nbsp;
                                             @endif
                                         </td>
+                                        <td id="gameStatus-{{ $match->id }}">{{ $match->getStatus() }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

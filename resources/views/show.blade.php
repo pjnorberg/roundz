@@ -6,7 +6,6 @@
     </span>
     <div id="qualifying">
         <div class="qualifier-wrapper">
-            <h3>Qualifying rounds</h3>
             <table class="table">
                 <thead>
                 <tr>
@@ -44,11 +43,15 @@
                                     <div class="match clearfix{{ $match->hasTeams() ? '' : ' waiting' }}">
                                         <div class="team home-team{{ $match->finished && $match->homeParticipant->id == $match->winner()->id ? ' winner-team' : '' }}">
                                             <span class="home-team-name name">{{ $match->homeParticipant ? $match->homeParticipant->name : '' }}</span>
-                                            <span class="home-team-score score">{{ $match->home_score }}</span>
+                                            <span class="home-team-score score">
+                                                {{ $match->home_score }}
+                                            </span>
                                         </div>
                                         <div class="team away-team{{ $match->finished && $match->awayParticipant->id == $match->winner()->id ? ' winner-team' : '' }}">
                                             <span class="away-team-name name">{{ $match->awayParticipant ? $match->awayParticipant->name : '' }}</span>
-                                            <span class="away-team-score score">{{ $match->away_score }}</span>
+                                            <span class="away-team-score score">
+                                                {{ $match->away_score }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

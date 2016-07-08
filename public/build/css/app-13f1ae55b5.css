@@ -2423,6 +2423,9 @@ body {
 .statusbar {
   padding: 15px; }
 
+.score-box {
+  width: 40px; }
+
 /*
   Tournament show view:
 */
