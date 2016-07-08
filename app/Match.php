@@ -46,8 +46,12 @@ class Match extends Model
         parent::boot();
         static::saved(function($match)
         {
-            if ($match->finished) {
+            if ($match->finished && $match->playoff) {
+                // Feed players to the next round:
                 $match->updateNextRound();
+            }
+            else if ($match->finished && ! $match->playoff) {
+                // Set some data for this participant:
                 $match->setPoints();
                 $match->addGame();
                 $match->calculateDiff();
@@ -164,6 +168,10 @@ class Match extends Model
         $this->playoff = 1;
     }
 
+    /**
+     * Add points to winners / tie game.
+     * @return bool
+     */
     public function setPoints()
     {
         // The game is tied, give 1 point each:
@@ -188,8 +196,14 @@ class Match extends Model
             $this->awayParticipant->save();
             return true;
         }
+
+        return false;
     }
 
+    /**
+     * Add total of games played.
+     * @return bool
+     */
     public function addGame()
     {
         $this->homeParticipant->games_played += 1;

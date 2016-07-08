@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Match;
+use App\Participant;
 use App\Tournament;
 use Illuminate\Contracts\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -101,9 +102,20 @@ class AppController extends Controller
     public function deleteMatches($tournamentId)
     {
         try {
+            // Delete all matches in tournament:
             Match::where('tournament_id', $tournamentId)->delete();
 
-            return back()->with('success_message', 'Your tournament matches has been deleted.');
+            // Reset participant stats:
+            Participant::where('tournament_id', $tournamentId)->update([
+                'points' => 0,
+                'diff' => 0,
+                'games_played' => 0
+            ]);
+
+            return back()->with(
+                'success_message',
+                'Your tournament matches has been deleted. All participant data has been cleared.'
+            );
         }
         catch (\Exception $e) {
             return back()->withErrors();

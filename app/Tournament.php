@@ -73,19 +73,42 @@ class Tournament extends Model
         return $this->playoffMatches()->select('round')->groupBy('round')->get()->pluck('round');
     }
 
-    public function getQualifyingTable()
+    public function getQualifyingTable($qualified = false)
     {
-        return $this->participants()
+        $table = $this->participants()
             ->orderBy('points', 'DESC')
             ->orderBy('diff', 'DESC')
             ->orderBy('games_played', 'DESC')
-            ->get()
         ;
+
+        if ($qualified && $this->playoff_size) {
+            $table->limit($qualified);
+        }
+
+        return $table->get();
     }
 
+    /**
+     * Populate the first round of playoff games with the top participants.
+     */
     public function setupPlayoff()
     {
-        // todo: populate the first round of the playoff with the top participants!
         $playoffSize = $this->playoff_size;
+        $matches = $this->playoffMatches()->where('round', 1)->get();
+        $participants = $this->getQualifyingTable($playoffSize);
+        $half = $participants->count() / 2;
+        $participantArray = array_chunk($participants->toArray(), $half);
+
+        // First half should make up home teams:
+        foreach ($matches as $index => $match) {
+            $match->home_participant_id = $participantArray[0][$index]['id'];
+            $match->save();
+        }
+
+        // Let second half make up away teams:
+        foreach ($matches as $index => $match) {
+            $match->away_participant_id = $participantArray[1][$index]['id'];
+            $match->save();
+        }
     }
 }

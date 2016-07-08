@@ -3,7 +3,6 @@
 @section('content')
     <span class="tournamentHeader">
         <h1>{{ $tournament->name }}</h1>
-        <small class="subheader">Playoff</small>
     </span>
     <div id="qualifying">
         <div class="qualifier-wrapper">
