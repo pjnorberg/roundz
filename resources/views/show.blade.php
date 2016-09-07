@@ -6,6 +6,7 @@
     </span>
     <div id="qualifying">
         <div class="qualifier-wrapper">
+            @if ($participants->count() > 0)
             <table class="table">
                 <thead>
                 <tr>
@@ -21,15 +22,16 @@
                         <tr class="cutoff">
                     @else
                         <tr>
-                            @endif
+                    @endif
                             <td>{{ $participant->name }}</td>
                             <td class="text-center">{{ $participant->points }}</td>
                             <td class="text-center">{{ $participant->diff }}</td>
                             <td class="text-center">{{ $participant->games_played }}</td>
                         </tr>
-                        @endforeach
+                @endforeach
                 </tbody>
             </table>
+            @endif
         </div>
     </div>
     <div id="tournament" class="clearfix">

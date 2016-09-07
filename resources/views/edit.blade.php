@@ -28,7 +28,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="well">
-                    {{ Form::model($tournament, ['method' => 'PUT', 'route' => ['app.update', $tournament->id]]) }}
+                    {{ Form::model($tournament, ['method' => 'PUT', 'route' => ['tournaments.update', $tournament->id]]) }}
                         @include ('partials._form')
                     {{ Form::close() }}
                     <div class="clearfix"></div>

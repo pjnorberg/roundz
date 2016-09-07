@@ -68,7 +68,6 @@ class TournamentController extends Controller
             $this->validate($request, $tournament->rules(), $tournament->messages());
             $tournament->name = $request->get('name');
             $tournament->slug = $request->get('slug');
-            $tournament->instagram_tag = $request->get('instagram_tag');
             $tournament->user_id = Auth::user()->id;
             $tournament->save();
 
